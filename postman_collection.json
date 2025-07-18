@@ -1,0 +1,284 @@
+{
+  "info": {
+    "name": "Travel Collaboration API",
+    "description": "Complete API collection for the Travel Collaboration system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Trips",
+      "item": [
+        {
+          "name": "Get All Trips",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": ["{{baseUrl}}"],
+              "path": ["trips"]
+            }
+          }
+        },
+        {
+          "name": "Create Trip",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Amazing Paris Trip\",\n  \"description\": \"A wonderful journey through the city of lights\",\n  \"start_date\": \"2024-07-01\",\n  \"end_date\": \"2024-07-07\",\n  \"country\": \"France\",\n  \"category\": \"Cultural\",\n  \"estimated_cost\": 1500.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/trips",
+              "host": ["{{baseUrl}}"],
+              "path": ["trips"]
+            }
+          }
+        },
+        {
+          "name": "Get Trip Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/trips/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["trips", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Trip",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Paris Trip\",\n  \"estimated_cost\": 1800.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/trips/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["trips", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Collaborators",
+      "item": [
+        {
+          "name": "Add Collaborator",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jane_smith\",\n  \"role\": \"editor\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/trips/1/collaborators",
+              "host": ["{{baseUrl}}"],
+              "path": ["trips", "1", "collaborators"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activities",
+      "item": [
+        {
+          "name": "Add Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"sightseeing\",\n  \"location\": \"Eiffel Tower\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"11:00\",\n  \"notes\": \"Visit the iconic Eiffel Tower\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/trips/1/days/1/activities",
+              "host": ["{{baseUrl}}"],
+              "path": ["trips", "1", "days", "1", "activities"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Top Cities Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reports/top-cities",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "top-cities"]
+            }
+          }
+        },
+        {
+          "name": "User Collaborations Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reports/user-collaborations",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "user-collaborations"]
+            }
+          }
+        },
+        {
+          "name": "Activity Summary Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reports/activity-summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "activity-summary"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
