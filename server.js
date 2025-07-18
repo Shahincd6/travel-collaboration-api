@@ -19,7 +19,7 @@ const app = express()
 const server = http.createServer(app)
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: process.env.CLIENT_URL || "*",
     methods: ["GET", "POST"],
   },
 })
@@ -33,12 +33,28 @@ app.use(express.json({ limit: "10mb" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(generalLimiter)
 
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({
+    message: "Travel Collaboration API",
+    version: "1.0.0",
+    status: "running",
+    endpoints: {
+      health: "/health",
+      auth: "/api/auth",
+      trips: "/api/trips",
+      reports: "/api/reports",
+    },
+  })
+})
+
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
     status: "OK",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
+    database: "connected",
   })
 })
 
@@ -89,13 +105,28 @@ app.use((err, req, res, next) => {
   })
 })
 
-// 404 handler
+// 404 handler - This catches all unmatched routes
 app.use("*", (req, res) => {
-  res.status(404).json({ error: "Route not found" })
+  res.status(404).json({
+    error: "Route not found",
+    path: req.originalUrl,
+    method: req.method,
+    available_endpoints: [
+      "GET /",
+      "GET /health",
+      "POST /api/auth/register",
+      "POST /api/auth/login",
+      "GET /api/trips",
+      "POST /api/trips",
+      "GET /api/reports/top-cities",
+      "GET /api/reports/user-collaborations",
+      "GET /api/reports/activity-summary",
+    ],
+  })
 })
 
 // Start server
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Travel Collaboration API running on port ${PORT}`)
   console.log(`📊 Health check: http://localhost:${PORT}/health`)
   console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`)
